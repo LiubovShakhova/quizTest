@@ -1,6 +1,6 @@
 // OBRABOCHIK SOBITIY, otslezivaet zagruzku kontenta______________
 document.addEventListener('DOMContentLoaded', function() {
-  'use strict';
+  //'use strict';
   const btnOpenModal = document.querySelector('#btnOpenModal');
   const modalBlock = document.querySelector('#modalBlock');
   const closeModal = document.querySelector('#closeModal');
@@ -12,6 +12,29 @@ document.addEventListener('DOMContentLoaded', function() {
   const modalDialog = document.querySelector('.modal-dialog');
   const sendButton = document.querySelector('#send');
   const modalTitle = document.querySelector('.modal-title');
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAXQ_cpvzixTZ7eBqYlCLDwzTDkhtlywJU",
+    authDomain: "quiz-9b224.firebaseapp.com",
+    databaseURL: "https://quiz-9b224.firebaseio.com",
+    projectId: "quiz-9b224",
+    storageBucket: "quiz-9b224.appspot.com",
+    messagingSenderId: "68069325999",
+    appId: "1:68069325999:web:dbd51d721ff2ed658fa85a",
+    measurementId: "G-XDJPQ4S6X9"
+  };
+  firebase.initializeApp(firebaseConfig);
+  
+  //FUNCTION Polucheniya Dannich_______________________________
+  const getData = () => {
+      formAnswers.textContent = 'LOAD';
+
+        firebase.database().ref().child('questions').once('value')
+        .then(snap => playTest(snap.val()))
+      
+        //playTest();
+      }
+  }
 
   let myVar = 2;
   
@@ -40,80 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log(`Ich liebe ${string} Großes`);*/
 
 //QUESTION-ANSWERS________________________________
-  const questions = [
-    {
-        question: "Какого цвета бургер?",
-        answers: [
-            {
-                title: 'Стандарт',
-                url: './image/burger.png'
-            },
-            {
-                title: 'Черный',
-                url: './image/burgerBlack.png'
-            }
-        ],
-        type: 'radio'
-    },
-    {
-        question: "Из какого мяса котлета?",
-        answers: [
-            {
-                title: 'Курица',
-                url: './image/chickenMeat.png'
-            },
-            {
-                title: 'Говядина',
-                url: './image/beefMeat.png'
-            },
-            {
-                title: 'Свинина',
-                url: './image/porkMeat.png'
-            }
-        ],
-        type: 'radio'
-    },
-    {
-        question: "Дополнительные ингредиенты?",
-        answers: [
-            {
-                title: 'Помидор',
-                url: './image/tomato.png'
-            },
-            {
-                title: 'Огурец',
-                url: './image/cucumber.png'
-            },
-            {
-                title: 'Салат',
-                url: './image/salad.png'
-            },
-            {
-                title: 'Лук',
-                url: './image/onion.png'
-            }
-        ],
-        type: 'checkbox'
-    },
-    {
-        question: "Добавить соус?",
-        answers: [
-            {
-                title: 'Чесночный',
-                url: './image/sauce1.png'
-            },
-            {
-                title: 'Томатный',
-                url: './image/sauce2.png'
-            },
-            {
-                title: 'Горчичный',
-                url: './image/sauce3.png'
-            }
-        ],
-        type: 'radio'
-    }
-];
+ 
 
 
 
@@ -174,7 +124,7 @@ const animateModal = () => {
     //interval = setInterval(animateModal, 15);
     interval = requestAnimationFrame(animateModal);
     modalBlock.classList.add('d-block');
-    playTest();
+    getData();
   });
 
   closeModal.addEventListener('click', function() {
@@ -194,7 +144,7 @@ const animateModal = () => {
   });
 
 //FUNCTION testirovaniya__________________________________________
-  const playTest = () => {
+  const playTest = (questions) => {
 
     const finalAnswers = [];
     const obj = {};
@@ -326,7 +276,11 @@ const animateModal = () => {
       checkAnswer();
       numberQuestion++;
       renderQuestions(numberQuestion);
-      console.log(finalAnswers);
+      firebase
+      .database()
+      .ref()
+      .child('contacts')
+      .push(finalAnswers)
     }
 
     document.getElementById('formAnswers')
